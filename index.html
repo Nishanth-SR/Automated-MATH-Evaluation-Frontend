@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Run MathQuill</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.css"/> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathquill/0.10.1/mathquill.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .math-field {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            min-height: 50px;
+            background-color: #fafafa;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        .math-field:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .label {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .toolbox {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .toolbox button {
+            width: 30px;
+            height: 30px;
+            font-size: 14px;
+            padding: 0;
+            margin: 5px;
+        }
+    </style>
+
+    <script>
+        var MQ = MathQuill.getInterface(2);
+        var currentMathField = null; // Track the currently active MathQuill field
+
+        // Function to insert a symbol into the active MathQuill field
+        function insertSymbol(symbol) {
+            if (currentMathField) {
+                currentMathField.cmd(symbol);
+            }
+            modal.style.display = "none"; // Close modal after inserting symbol
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Automated Math Evaluation</h1>
+
+        <div>
+            <label for="question" class="label">Enter your question:</label>
+            <div id="question" class="math-field" contenteditable="true"></div>
+            <button id="questionToolkitButton">Toolkit</button>
+        </div>
+
+        <div>
+            <label for="answer" class="label">Enter your answer:</label>
+            <div id="answer" class="math-field" contenteditable="true">x=</div>
+            <button id="answerToolkitButton">Toolkit</button>
+        </div>
+
+        <button id="showLatexButton">Show LaTeX</button>
+
+        <button id="addAnswerBoxButton">Add Answer Box</button> 
+        <div id="answerBoxes"></div>
+
+    </div>
+
+    <!-- The Modal -->
+    <div id="symbolModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Select a Symbol</h2>
+            <div class="toolbox">
+                <button onclick="insertSymbol('+')">+</button>
+                <button onclick="insertSymbol('-')">-</button>
+                <button onclick="insertSymbol('*')">*</button>
+                <button onclick="insertSymbol('/')">/</button>
+                <button onclick="insertSymbol('=')">=</button>
+                <button onclick="insertSymbol('(')">(</button>
+                <button onclick="insertSymbol(')')">)</button>
+                <button onclick="insertSymbol('{')">{</button>
+                <button onclick="insertSymbol('}')">}</button>
+                <button onclick="insertSymbol('[')">[</button>
+                <button onclick="insertSymbol(']')">]</button>
+                <button onclick="insertSymbol('^')">^</button>
+                <button onclick="insertSymbol('_')">_</button>
+                <button onclick="insertSymbol('|')">|</button>
+                <button onclick="insertSymbol('||')">||</button>
+                <button onclick="insertSymbol('\\')">\\</button>
+                <button onclick="insertSymbol('<')"><</button>
+                <button onclick="insertSymbol('>')">></button>
+                <button onclick="insertSymbol('<=')">≤</button>
+                <button onclick="insertSymbol('>=')">≥</button>
+                <button onclick="insertSymbol('!=')">≠</button>
+                <button onclick="insertSymbol('approx')">≈</button>
+                <button onclick="insertSymbol('nabla')">∇</button>
+                <button onclick="insertSymbol('times')">×</button>
+                <button onclick="insertSymbol('div')">÷</button>
+                <button onclick="insertSymbol('cdot')">⋅</button>
+                <button onclick="insertSymbol('pm')">±</button>
+                <button onclick="insertSymbol('mp')">∓</button>
+                <button onclick="insertSymbol('in')">∈</button>
+                <button onclick="insertSymbol('notin')">∉</button>
+                <button onclick="insertSymbol('cup')">∪</button>
+                <button onclick="insertSymbol('cap')">∩</button>
+                <button onclick="insertSymbol('emptyset')">∅</button>
+                <button onclick="insertSymbol('alpha')">α</button>
+                <button onclick="insertSymbol('beta')">β</button>
+                <button onclick="insertSymbol('gamma')">γ</button>
+                <button onclick="insertSymbol('delta')">δ</button>
+                <button onclick="insertSymbol('epsilon')">ε</button>
+                <button onclick="insertSymbol('zeta')">ζ</button>
+                <button onclick="insertSymbol('eta')">η</button>
+                <button onclick="insertSymbol('theta')">θ</button>
+                <button onclick="insertSymbol('iota')">ι</button>
+                <button onclick="insertSymbol('kappa')">κ</button>
+                <button onclick="insertSymbol('lambda')">λ</button>
+                <button onclick="insertSymbol('mu')">μ</button>
+                <button onclick="insertSymbol('nu')">ν</button>
+                <button onclick="insertSymbol('xi')">ξ</button>
+                <button onclick="insertSymbol('omicron')">ο</button>
+                <button onclick="insertSymbol('pi')">π</button>
+                <button onclick="insertSymbol('rho')">ρ</button>
+                <button onclick="insertSymbol('sigma')">σ</button>
+                <button onclick="insertSymbol('tau')">τ</button>
+                <button onclick="insertSymbol('upsilon')">υ</button>
+                <button onclick="insertSymbol('phi')">φ</button>
+                <button onclick="insertSymbol('chi')">χ</button>
+                <button onclick="insertSymbol('psi')">ψ</button>
+                <button onclick="insertSymbol('omega')">ω</button>
+                <button onclick="insertSymbol('Gamma')">Γ</button>
+                <button onclick="insertSymbol('Delta')">Δ</button>
+                <button onclick="insertSymbol('Theta')">Θ</button>
+                <button onclick="insertSymbol('Lambda')">Λ</button>
+                <button onclick="insertSymbol('Pi')">Π</button>
+                <button onclick="insertSymbol('Sigma')">Σ</button>
+                <button onclick="insertSymbol('Upsilon')">Υ</button>
+                <button onclick="insertSymbol('Phi')">Φ</button>
+                <button onclick="insertSymbol('Psi')">Ψ</button>
+                <button onclick="insertSymbol('Omega')">Ω</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var questionField = MQ.MathField(document.getElementById('question'), {
+                handlers: {
+                    edit: function() {
+                        currentMathField = questionField;
+                    }
+                }
+            });
+            var answerField = MQ.MathField(document.getElementById('answer'), {
+                handlers: {
+                    edit: function() {
+                        currentMathField = answerField;
+                    }
+                }
+            });
+
+            // Show LaTeX representation
+            $('#showLatexButton').on('click', function() {
+                var latex = "Question LaTeX: " + questionField.latex() + "\n";
+                latex += "Answer LaTeX: " + answerField.latex();
+                $('.container').append('<p>' + latex + '</p>');
+            });
+
+            // Show modal for question toolkit
+            $('#questionToolkitButton').on('click', function() {
+                currentMathField = questionField;
+                $('#symbolModal').show();
+            });
+
+            // Show modal for answer toolkit
+            $('#answerToolkitButton').on('click', function() {
+                currentMathField = answerField;
+                $('#symbolModal').show();
+            });
+
+            // Close modal when clicking the close button
+            $('.close').on('click', function() {
+                $('#symbolModal').hide();
+            });
+
+            // Add new answer box
+            $('#addAnswerBoxButton').on('click', function() {
+                var newAnswerBox = $('<div class="math-field" contenteditable="true"></div>');
+                $('#answerBoxes').append(newAnswerBox);
+                var newAnswerField = MQ.MathField(newAnswerBox[0], {
+                    handlers: {
+                        edit: function() {
+                            currentMathField = newAnswerField;
+                        }
+                    }
+                });
+                currentMathField = newAnswerField; // Set the new field as active
+                $('<button>Toolkit</button>').appendTo($('#answerBoxes')).on('click', function() {
+                    currentMathField = newAnswerField; // Set current field to the new one when the toolkit is opened
+                    $('#symbolModal').show();
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
